@@ -41,12 +41,12 @@
     {
       "type": "module",
       "name": "socketlib",
-      "manifest": "https://raw.githubusercontent.com/manuelVo/foundryvtt-socketlib/master/module.json"
+      "manifest": "https://raw.githubusercontent.com/manuelVo/foundryvtt-socketlib/v1.0.10/module.json"
     }   
   ],
   "socket": true,
-  "manifest": "https://raw.githubusercontent.com/brunocalado/raise-my-hand-plus/main/module.json",
-  "download": "https://codeload.github.com/brunocalado/raise-my-hand-plus/zip/main",
+  "manifest": "https://raw.githubusercontent.com/tdbits/raise-my-hand-plus/main/module.json",
+  "download": "https://codeload.github.com/tdbits/raise-my-hand-plus/zip/main",
   "protected": false,
   "coreTranslation": false,
   "library": true
