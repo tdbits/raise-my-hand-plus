@@ -66,8 +66,8 @@ export default class HandRaiser {
       if (game.settings.get(this.moduleName, "showUiChatMessageOnlyForGM")) {
         chatData.whisper = ChatMessage.getWhisperRecipients("GM");
       }
-      
-      ChatMessage.create(chatData, {});
+
+      ChatMessage.create(chatData);
     } // END CHAT
 
     // SOUND
