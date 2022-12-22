@@ -61,28 +61,26 @@ export default class HandRaiser {
       let chatImageWidth = game.settings.get(this.moduleName, "chatimagewidth");
       let chatData;
       const showImageChatMessage = game.settings.get(this.moduleName, "showImageChatMessage");
-      let message='';
       if (showImageChatMessage) {
         if (game.settings.get(this.moduleName, "chatMessageImageUserArt")) {
           imagePath = player.data.avatar;
         } else {
           imagePath = game.settings.get("raise-my-hand", "chatimagepath");
         }
-        message += `<label class="titulo" style="font-size:35px; color: #b02b2e;">${player.name}</label></br><label style="font-size: 15px">${game.i18n.localize("raise-my-hand.CHATMESSAGE")}</label><p><img style="vertical-align:middle" src="${imagePath}" width="${chatImageWidth}%"></p>`; 
-      } else {
-        message += `<label class="titulo" style="font-size:35px; color: #b02b2e;">${player.name}</label></br><label style="font-size: 15px">${game.i18n.localize("raise-my-hand.CHATMESSAGE")}</label>`; 
       }
       
       if (game.settings.get(this.moduleName, "showUiChatMessageOnlyForGM")) {
         chatData = {
-          speaker: null,
-          content: message,
+          speaker: this.userId,
+          flavor: `${player.name} ${game.i18n.localize("raise-my-hand.CHATMESSAGE")}`,
+          content: '✋',
           whisper : ChatMessage.getWhisperRecipients("GM")          
         }; // has their hand raised!
       } else {
         chatData = {
-          speaker: null,
-          content: message
+          speaker: this.userId,
+          flavor: `${player.name} ${game.i18n.localize("raise-my-hand.CHATMESSAGE")}`,
+          content: '✋'
         }; // has their hand raised!        
       }
       ChatMessage.create(chatData, {});
