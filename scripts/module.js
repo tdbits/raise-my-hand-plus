@@ -82,48 +82,6 @@ Hooks.once('ready', function() {
     type: Boolean,
     default: false
   });
-
-  game.settings.register(moduleName, "showImageChatMessage", {
-    name: game.i18n.localize("raise-my-hand.settings.showimagechatmessage.name"), // "Should a image be displayed with the chat message?"
-    hint: game.i18n.localize("raise-my-hand.settings.showimagechatmessage.hint"), // "Should a image be displayed with the chat message?"
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: true
-  });
-  
-  // call this with: game.settings.get("raise-my-hand", "chatimagepath")
-  game.settings.register(moduleName, 'chatimagepath', {
-    name: game.i18n.localize("raise-my-hand.settings.chatimagepath.name"), // Chat Image Path
-    hint: game.i18n.localize("raise-my-hand.settings.chatimagepath.hint"), // "You can set a path to the image displayed on the chat."
-    scope: 'world',
-    config: true,
-    default: 'modules/raise-my-hand/assets/hand.svg',
-    type: String
-  }); 
-  
-  game.settings.register(moduleName, 'chatimagewidth', {
-    name: game.i18n.localize("raise-my-hand.settings.chatimagewidth.name"), // 'Chat Image Width'
-    hint: game.i18n.localize("raise-my-hand.settings.chatimagewidth.hint"), // 'You can set the size of the custom image or player avatar. It is %'
-    scope: 'world',
-    config: true,
-    default: 100,
-    range: {
-      min: 20,
-      max: 100,
-      step: 5
-    },    
-    type: Number
-  }); 
-
-  game.settings.register(moduleName, "chatMessageImageUserArt", {
-    name: game.i18n.localize("raise-my-hand.settings.chatmessageimageuserart.name"), // "Should chat image be the user avatar?"
-    hint: game.i18n.localize("raise-my-hand.settings.chatmessageimageuserart.name"), // 'This will use the user avatar as chat image instead of the default image.'
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: false
-  });
   
   game.settings.register(moduleName, "playSound", {
     name: game.i18n.localize("raise-my-hand.settings.playsound.name"), // "Should a sound be played when raised?"

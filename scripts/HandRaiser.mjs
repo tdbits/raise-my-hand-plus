@@ -4,11 +4,11 @@ export default class HandRaiser {
     this.isRaised = false;
     this.userId = game.userId;
     this.moduleName = "raise-my-hand";
-    
+
     // socketlib
-    this.socket = socketlib.registerModule(this.moduleName);       	
-  	this.socket.register("sendNotification", this.sendNotification);
-    this.socket.register("shakeTheScreen", this.shakeTheScreen);    
+    this.socket = socketlib.registerModule(this.moduleName);
+    this.socket.register("sendNotification", this.sendNotification);
+    this.socket.register("shakeTheScreen", this.shakeTheScreen);
     this.socket.register("showHandForEveryone", this.showHandForEveryone); // SHOW HAND FOR EVERYONE
     this.socket.register("removeHandForEveryone", this.removeHandForEveryone); // REMOVE HAND FOR EVERYONE
   }
@@ -18,74 +18,58 @@ export default class HandRaiser {
       if (this.isRaised) this.lower();
       else this.raise();
     } else {
-      this.raise();      
-    }      
+      this.raise();
+    }
   }
 
   raise() {
     const id = this.userId;
     if (game.settings.get(this.moduleName, "handToogleBehavior")) {
-      if (this.isRaised) return;    
+      if (this.isRaised) return;
       this.isRaised = true;
-      
+
       if (game.settings.get(this.moduleName, "showEmojiIndicator")) { // SHOW HAND NEXT TO PLAYER NAME
-        this.socket.executeForEveryone(this.showHandForEveryone, id);              
+        this.socket.executeForEveryone(this.showHandForEveryone, id);
       }
-    } 
-    
+    }
+
     // SHOW NOTIFICATION
     if (game.settings.get(this.moduleName, "showUiNotification")) {
       let player = game.users.get(id);
       if (game.settings.get(this.moduleName, "showUiNotificationOnlyToGM")) {
         //https://github.com/manuelVo/foundryvtt-socketlib#socketexecuteforallgms
         const permanentFlag = game.settings.get(this.moduleName, "makeUiNotificationPermanent");
-        this.socket.executeForAllGMs(this.sendNotification, player, permanentFlag);                    
+        this.socket.executeForAllGMs(this.sendNotification, player, permanentFlag);
       } else {
         //https://github.com/manuelVo/foundryvtt-socketlib#socketexecuteforeveryone
         const permanentFlag = game.settings.get(this.moduleName, "makeUiNotificationPermanent");
-        this.socket.executeForEveryone(this.sendNotification, player, permanentFlag);              
+        this.socket.executeForEveryone(this.sendNotification, player, permanentFlag);
       }
-    }  
+    }
 
     // SHAKE SCREEN
     if (game.settings.get(this.moduleName, "shakescreen")) {
       //https://github.com/manuelVo/foundryvtt-socketlib#socketexecuteforeveryone            
-      this.socket.executeForEveryone(this.shakeTheScreen); 
+      this.socket.executeForEveryone(this.shakeTheScreen);
     }
 
     // ======================================
     // CHAT
     if (game.settings.get(this.moduleName, "showUiChatMessage")) {
       let player = game.users.get(this.userId);
-      let imagePath;
-      let chatImageWidth = game.settings.get(this.moduleName, "chatimagewidth");
-      let chatData;
-      const showImageChatMessage = game.settings.get(this.moduleName, "showImageChatMessage");
-      if (showImageChatMessage) {
-        if (game.settings.get(this.moduleName, "chatMessageImageUserArt")) {
-          imagePath = player.data.avatar;
-        } else {
-          imagePath = game.settings.get("raise-my-hand", "chatimagepath");
-        }
+      let chatData = {
+        speaker: { alias: player.name, token: this.userId },
+        flavor: `${player.name} ${game.i18n.localize("raise-my-hand.CHATMESSAGE")}`,
+        content: '✋'
+      };
+
+      if (game.settings.get(this.moduleName, "showUiChatMessageOnlyForGM")) {
+        chatData.whisper = ChatMessage.getWhisperRecipients("GM");
       }
       
-      if (game.settings.get(this.moduleName, "showUiChatMessageOnlyForGM")) {
-        chatData = {
-          speaker: this.userId,
-          flavor: `${player.name} ${game.i18n.localize("raise-my-hand.CHATMESSAGE")}`,
-          content: '✋',
-          whisper : ChatMessage.getWhisperRecipients("GM")          
-        }; // has their hand raised!
-      } else {
-        chatData = {
-          speaker: this.userId,
-          flavor: `${player.name} ${game.i18n.localize("raise-my-hand.CHATMESSAGE")}`,
-          content: '✋'
-        }; // has their hand raised!        
-      }
       ChatMessage.create(chatData, {});
     } // END CHAT
-  
+
     // SOUND
     if (game.settings.get(this.moduleName, "playSound")) {
       const soundVolume = game.settings.get("raise-my-hand", "warningsoundvolume");
@@ -104,31 +88,31 @@ export default class HandRaiser {
     if (!this.isRaised) return;
     this.isRaised = false;
     if (game.settings.get(this.moduleName, "showEmojiIndicator")) {
-      this.socket.executeForEveryone(this.removeHandForEveryone, id);              
+      this.socket.executeForEveryone(this.removeHandForEveryone, id);
     }
   }
 
-  sendNotification(player, permanentFlag) {    
-    ui.notifications.notify( '✋ ' + player.name + game.i18n.localize("raise-my-hand.UINOTIFICATION"), 'info', {permanent: permanentFlag} ); 
-  }   
+  sendNotification(player, permanentFlag) {
+    ui.notifications.notify('✋ ' + player.name + game.i18n.localize("raise-my-hand.UINOTIFICATION"), 'info', { permanent: permanentFlag });
+  }
 
   showHandForEveryone(id) {       //THIS WILL ADD THE HAND
     $("[data-user-id='" + id + "'] > .player-name").append("<span class='raised-hand'>✋</span>");
-  }   
+  }
 
   removeHandForEveryone(id) {     //THIS WILL REMOVE THE HAND
     $("[data-user-id='" + id + "'] > .player-name > .raised-hand").remove();
-  }   
-  
+  }
+
   shakeTheScreen() {
     const intensity = 1;
     const duration = 500;
     const iteration = 3;
-    
-    if (game.modules.get('kandashis-fluid-canvas')?.active) { 
+
+    if (game.modules.get('kandashis-fluid-canvas')?.active) {
       FluidCanvas.earthquake(intensity, duration, iteration);
     } else {
-      ui.notifications.error( '✋ ' + game.i18n.localize("raise-my-hand.kandashisfluidcanvas") ); //
-    }       
-  } 
+      ui.notifications.error('✋ ' + game.i18n.localize("raise-my-hand.kandashisfluidcanvas")); //
+    }
+  }
 }
